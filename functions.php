@@ -1,529 +1,323 @@
 <?php
 
-//کلیه اسکریپتهای سبد خرید  if (function_exists('jdate'))
+/**
+ * Enqueue script and styles for child theme
+ * @author رامین خیریه 
 
-function rknm_loder_wp_enqueue($name_jc,$js=null,$css=null,$path_dir,$path_dir_main){
-
-    if ($js)  wp_enqueue_script($name_jc.'-js',$path_dir.'/assets/js/'.$name_jc.'.js',['jquery'],
-                              filemtime($path_dir_main . '/assets/js/'.$name_jc.'.js'),true);
-    if ($css) wp_enqueue_style($name_jc.'-css',$path_dir.'/assets/css/'.$name_jc.'.css',[],
-                              filemtime($path_dir_main . '/assets/css/'.$name_jc.'.css'));
-}
-
-
+ */
 add_action('wp_enqueue_scripts',function () {
-$path_dir=get_stylesheet_directory_uri();
-$path_dir_main = get_stylesheet_directory();
 
+ wp_enqueue_style('rknm-child-style', get_stylesheet_directory_uri() . '/style.css',array(),filemtime(get_stylesheet_directory() . '/style.css'));
+ //	wp_enqueue_script('jsname', get_template_directory_uri().'/scripts.js', array(),  wp_get_theme()->get('Version'), false );
+ /*   
+ wp_dequeue_style( 'wp-block-library' ); // گوتنبرگWordpress core
+    wp_dequeue_style( 'wp-block-library-theme' ); // گوتنبرگWordpress core
+    wp_dequeue_style( 'wc-block-style' ); // گوتنبرگWooCommerce
+    wp_dequeue_style( 'storefront-gutenberg-blocks' ); //گوتنبرگ Storefront theme
+*/
+});
+/*  حذف و جایگزینی ویرایشگر گوتنبرگ کلاسیک */
+//add_filter('use_block_editor_for_post_type', '__return_false', 10);
+//add_filter( 'use_block_editor_for_post', '__return_false' );
+//add_filter( 'use_widgets_block_editor', '__return_false' );
+/* حذف zlib*/
+remove_action( 'shutdown', 'wp_ob_end_flush_all', 1 );
 
-// نمایش plus+ minus- دکمه  ///
+if (class_exists('WooCommerce'))  {
+	require_once('function-script.php');
+	require_once('function-cart-ajax.php');
+	require_once('pre-test.php');
+	require_once('function-wc.php');
+}		
+//  ---------  فقط ادمین و ویرایشگر به نوار بالای پیشخوان دسترسی دارند  ------------
+add_action('after_setup_theme', 'remove_admin_bar');
+
+function remove_admin_bar() {
+
+$view_admin_bar='false';	
+$user = wp_get_current_user();
+
+if (is_admin())	{
+if ( in_array('administrator', $user->roles)  || in_array('editor', $user->roles)) 
+  {
+    require_once('function-modir.php');
+    require_once('fild-meta_product.php');
+	if (class_exists('WooCommerce')) 
+  	   require_once('function-wc-modir.php');
+	$view_admin_bar ='true';
+  }
+} 
+
+show_admin_bar($view_admin_bar);
+}
+
+// --- خروج مستقیم از حساب کاربری   ------------ 
+
+function logout_to_optional_redirect_slug_function( $atts, $redirect_slug = null ) {
+    $redirect_full_url = /* get_site_url(null, '/', 'https') .*/ $redirect_slug;
+    $logout_url = wp_logout_url($redirect_full_url);
+    //$logout_hyperlink = "<a href='".$logout_url."'>Logout</a>";
+    return do_shortcode($logout_url);
+}
+add_shortcode( 'logout_link', 'logout_to_optional_redirect_slug_function' );
+
+add_action( 'show_user_profile', 'zx_extra_profile_fields' );
+add_action( 'edit_user_profile', 'zx_extra_profile_fields' );
+function zx_extra_profile_fields( $user ) { 
+ ?>
+    <table class="form-table">
+    <tr>
+        <th><label for="avatar_url"><?php _e("تصویر کاربر"); ?></label></th>
+        <td>
+            <input type="text" name="zx_avatar_url" id="zx_avatar_url" 
+                value="<?php echo esc_attr( get_the_author_meta( '_rknm_user_pic', $user->ID ) ); ?>"
+                class="regular-text" placeholder="<?php _e("url تصویر را وارد کنید"); ?>"/>            
+        </td>
+    </tr>
+    </table>
+ <?php 
+}
+ 
+add_action( 'personal_options_update', 'zx_save_extra_profile_fields' );
+add_action( 'edit_user_profile_update', 'zx_save_extra_profile_fields' );
+ 
+function zx_save_extra_profile_fields( $user_id ) {
+    if ( !current_user_can( 'edit_user', $user_id ) )
+        return false;     
+ 
+    update_user_meta( $user_id, '_rknm_user_pic',sanitize_text_field( $_POST['zx_avatar_url'] ) );
+ 
+}
+//-------------- حذف فونت گوگل از المنتور --------------------------
+add_filter( 'elementor/frontend/print_google_fonts', '__return_false' );
+
+//--------------- Imagic در کتابخانه وردپرس به جای  GD قراردادن-------------------
+/*add_filter( 'the_generator', '__return_false' );
+
+function hs_image_editor_default_to_gd( $editors ) {
+$gd_editor = 'WP_Image_Editor_GD';
+$editors = array_diff( $editors, array( $gd_editor ) );
+array_unshift( $editors, $gd_editor );
+return $editors;
+}
+add_filter( 'wp_image_editors', 'hs_image_editor_default_to_gd' );
+*/
+
+// ----------- کد حذف فایل Jquery Migrate از وردپرس  ---------------------
 /*
-if ( is_product() || is_cart() || is_shop() || is_product_category() ) {
-    rknm_loder_wp_enqueue('custom-quantity','js','',$path_dir,$path_dir_main);
+function remove_jquery_migrate( $scripts ) {
+   if ( ! is_admin() && isset( $scripts->registered['jquery'] ) ) {
+        $script = $scripts->registered['jquery'];
+   if ( $script->deps ) { 
+// بررسی کنید که آیا اسکریپت وابستگی‌هایی دارد یا خیر
+        $script->deps = array_diff( $script->deps, array( 'jquery-migrate' ) );
+ } } }
+
+add_action( 'wp_default_scripts', 'remove_jquery_migrate' );
+*/
+
+// ----------------- حذف ایموجی های اضافی و بالا بردن سرعت سایت ---------------- 
+//  Disable WP 4.2 emoji
+/*
+add_action( 'init', function () {
+	add_filter( 'option_use_smilies', '__return_false' );
+	add_filter( 'emoji_svg_url', '__return_false' );
+    remove_filter( 'embed_head', 'print_emoji_detection_script' );
+	remove_action( 'admin_print_styles', 'print_emoji_styles' );
+	remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
+	remove_action( 'admin_print_scripts', 'print_emoji_detection_script' );
+	remove_action( 'wp_print_styles', 'print_emoji_styles' );
+	remove_filter( 'wp_mail', 'wp_staticize_emoji_for_email' );
+	remove_filter( 'the_content_feed', 'wp_staticize_emoji' );
+	remove_filter( 'comment_text_rss', 'wp_staticize_emoji' );
+	// filter to remove TinyMCE emojis
+	add_filter( 'tiny_mce_plugins', 'ace_disable_emoji_tinymce' );
+});*/
+/**
+* Remove tinyMCE emoji
+*//*
+function ace_disable_emoji_tinymce( $plugins ) {
+	unset( $plugins['wpemoji'] );
+	return $plugins;
 }*/
-/*سبد خرید */
-if (is_cart() /*|| is_account_page()*/) {
-    rknm_loder_wp_enqueue('rknm-cart','js','css',$path_dir,$path_dir_main);
-    rknm_loder_wp_enqueue('rknm-nextcart','js','',$path_dir,$path_dir_main);
-
-    // Enqueue toastr
-    wp_enqueue_script('rknm-next-purchase-toastr','https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js',['jquery'],'2.1.4',true);
-    wp_enqueue_style('rknm-next-purchase-toastr-css','https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css',[],'2.1.4');
-
-}
-/*لایک و دیس لایک */
-if ( is_single() || is_product() ) {
-    rknm_loder_wp_enqueue('rknm-like-dislike','js','',$path_dir,$path_dir_main);
-    rknm_loder_wp_enqueue('rknm-star-rating','js','css',$path_dir,$path_dir_main);
-}
- /*جزئیات سفارش*/
-   //if (!is_wc_endpoint_url('order-received') && !is_wc_endpoint_url('view-order')) {
-if ( is_account_page() ) {
-    rknm_loder_wp_enqueue('rknm-order_detail','','css',$path_dir,$path_dir_main);
-    rknm_loder_wp_enqueue('rknm-order_details_after','','css',$path_dir,$path_dir_main);
-}
-/**product*/
-if ( is_product() ) {
-    rknm_loder_wp_enqueue('rknm-add_to_cart_popup','js','css',$path_dir,$path_dir_main);
-    rknm_loder_wp_enqueue('rknm-price_chart','js','css',$path_dir,$path_dir_main);
-    rknm_loder_wp_enqueue('rknm-counter_down','js','css',$path_dir,$path_dir_main);
-    rknm_loder_wp_enqueue('rknm-cross_sells','','css',$path_dir,$path_dir_main);
-    rknm_loder_wp_enqueue('rknm-dynamic_note_scroll','js','css',$path_dir,$path_dir_main);
-    rknm_loder_wp_enqueue('rknm-swatches','js','',$path_dir,$path_dir_main);
-
-    wp_enqueue_script('chart-js-fallback','https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js',[],'v4.4.4', true);
+// ------------------- نمایش مدت زمان مطالعه یک پست ---------------- 
+add_shortcode('rknm_time_reding_content', 'sarvis_reading_time');
+function sarvis_reading_time(){
+if (is_single()) {
+    global $post;
+	$word_count = count(preg_split('~[\p{Z}\p{P}]+~u', $post->post_content, -1, PREG_SPLIT_NO_EMPTY)); 
+    return ceil($word_count / 250);
+}else return '';
 }
 
-if ( is_product() || is_account_page()) {
-    /* لیست علاقه‌مندی‌ها */
-    rknm_loder_wp_enqueue('rknm-wishlist','js','css',$path_dir,$path_dir_main);
+// ------------------- بیشتر بخوانید در بین مطالب مقالات  ---------------- 
 
-    wp_enqueue_script('rknm-wishlist-toastr','https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js',['jquery'],'2.1.4',true);
-    wp_enqueue_style('rknm-wishlist-toastr-css','https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css',[],'2.1.4');
-}
-
-// نمایش پاپ در صفحه تصویه حساب زمانی که فیلترشکن روشن باشه
-if ( is_checkout() ) {
-    rknm_loder_wp_enqueue('rknm-vpn','js','css',$path_dir,$path_dir_main);
-
-    add_action('wp_footer', function () {
-        ?>
-        <div id="rknm-vpn-warning-modal" class="rknm-vpn-warning-modal" style="display: none;">
-            <div class="rknm-vpn-warning-modal-content">
-                <h4>هشدار</h4>
-                <p>لطفاً فیلترشکن خود را خاموش کنید تا بتوانید به درستی از سایت استفاده کنید.</p>
-                <div class="rknm-vpn-warning-modal-buttons">
-                    <button id="rknm-vpn-warning-modal-close" class="button">باشه</button>
-                </div></div></div>
-        <?php
-    });
-}
-if ( is_shop() || is_product_category() ) {
-    rknm_loder_wp_enqueue('rknm-loop-cart-p-t','js','css',$path_dir,$path_dir_main);
-}
+add_filter('the_content',function ($content){
+    if(is_singular('post')){
+        $post_id = get_the_ID();
+        ob_start();
+        $args = array(
+            'post_type' => 'post',
+            'posts_per_page' => '1',
+            'post_status' => 'publish',
+            'post__not_in' => array($post_id),
+            'category__in' => wp_get_post_categories($post_id),
+        );
+        $query = new WP_Query($args);
+        if ($query->have_posts()) {
+            while ($query->have_posts()) {
+                $query->the_post();
+                ?>
+                <p>
+                    <a href="<?php the_permalink(); ?>" style="padding:5px 15px;display: flex;flex-wrap:wrap;align-items: center;margin: 20px 0;border: 1px solid #ddd;border-radius: 5px;">
+                        <?php the_post_thumbnail('thumbnail', ['style' => 'width:50px;height:50px;border-radius:5px;object-fit:cover;']); ?>
+                        <span style="color: blue;margin: 0 15px 0 5px;font-weight: bold;display: inline-block">بیشتر بخوانید:</span>
+                        <b style="color: #222;"><?php the_title(); ?></b>
+                    </a>
+                </p>
+                <?php
+            }
+        }
+        wp_reset_postdata();
+        $related_html = ob_get_clean();
+        $paragraphs = explode( '</p>', $content );
+        $middle_index = floor( (count( $paragraphs ) / 2 )+6);
+        array_splice( $paragraphs, $middle_index, 0, '<p>' . $related_html . '</p>' );
+        return implode( '', $paragraphs );
+    }
+    return $content;
 });
 
+//----- تغییر ظاهر login وردپرس ------------//////
+  
+add_action('login_enqueue_scripts', function (){
+echo '<style type="text/css">@font-face{font-family:"FontF-Ramin";
+ src:url("'.get_stylesheet_directory_uri().'/fonts/iransansfanum/ttf/esfont.ttf")}
+ body.login.login-action-login, body.login.login-action-lostpassword 
+ ,.login .message, .login .notice
 
-// Localize AJAX Script
-add_action('wp_enqueue_scripts', function () {
-    // Load on all pages since shortcode can be used anywhere
-if ( is_product() || is_account_page()) {
-    wp_localize_script('rknm-wishlist-toastr', 'rknmWishlistAjax', array(
-        'ajax_url' => admin_url('admin-ajax.php'),
-        'nonce' => wp_create_nonce('rknm_wishlist_nonce'),
-        'user_id' => get_current_user_id() ? get_current_user_id() : 0,
-    ));
+{font-family:"FontF-Ramin"}
+
+#login h1 a {
+	height: 35px;
+	width: 177px;
+    background-size: 178px;
+    background-image: url(/rknm/pic/logo-RahKarNegarCo-color@2x.png);  
 }
-if (is_cart() /*|| is_account_page()*/) {
-        wp_localize_script('jquery', 'rknm_ajax', array(
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('rknm_next_purchase_nonce')
-        ));
-        wp_localize_script('jquery', 'rknm_ajax_cart', array(
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('rknm_cart_nonce')
-        ));
-
+.login form {
+	padding: 26px 24px 75px 26px !important;
+	margin: 24px 0 -97px 0 !important;
+    border-radius: 8px;
+    border: 3px solid #9f9f9f;  
 }
-if ( is_product() || is_account_page()) {
-        wp_localize_script( 'rknm-swatches-js', 'wc_add_to_cart_params',
-        array('ajax_url' => admin_url( 'admin-ajax.php' ) ) );
+.login form .input, .login input[type=password], .login input[type=text]{
+      min-height: 30px !important;
 }
-}, 20);
+.login form .input, .login form input[type=checkbox], .login input[type=text] {
+    background: #f3f6f7;
+	font-size: 12px !important;
+	}
+.login .forgetmenot label, .login .pw-weak label{
+	font-size: 10px !important;
+}
+.login #backtoblog a, .login #nav a{
+	font-size: 10px !important;
+}
+.language-switcher ,.privacy-policy-page-link {
+    display: none !important;
+}
+</style>';
+});
 
-/**آیجکس سبد خرید */
-// Helper function to check if product exists in next purchase list
-function rknm_product_exists_in_next_purchase($product_id, $variation_id = 0, $user_id = null) {
-    if (!$user_id)   $user_id = get_current_user_id();
-    if (!$user_id)   return false;
-
-    $next_purchase_list = get_user_meta($user_id, '_rknm_next_purchase_list', true);
-    if (!is_array($next_purchase_list)) {
-        return false;
+/*تبدیل تاریخ میلادی به شمسی*/
+if ( ! function_exists('fa_jalali_digits') ) {
+    function fa_jalali_digits($str){
+        $en = array('0','1','2','3','4','5','6','7','8','9');
+        $fa = array('۰','۱','۲','۳','۴','۵','۶','۷','۸','۹');
+        return str_replace($en, $fa, $str);
     }
-    foreach ($next_purchase_list as $item) {
-        if ($item['product_id'] == $product_id && $item['variation_id'] == $variation_id) {
-            return true;
+}
+
+if ( ! function_exists('fa_gregorian_to_jalali') ) {
+    function fa_gregorian_to_jalali($gy, $gm, $gd){
+        static $g_d_m = array(0,31,59,90,120,151,181,212,243,273,304,334);
+        $gy2 = ($gm > 2) ? ($gy + 1) : $gy;
+        $days = 355666 + (365*$gy) + floor(($gy2+3)/4) - floor(($gy2+99)/100) + floor(($gy2+399)/400) + $gd + $g_d_m[$gm-1];
+        $jy = -1595 + 33*floor($days/12053);
+        $days %= 12053;
+        $jy += 4*floor($days/1461);
+        $days %= 1461;
+        if ($days > 365) { $jy += floor(($days-1)/365); $days = ($days-1) % 365; }
+        if ($days < 186) { $jm = 1 + floor($days/31); $jd = 1 + ($days % 31); }
+        else { $jm = 7 + floor(($days-186)/30); $jd = 1 + (($days-186) % 30); }
+        return array($jy, $jm, $jd);
+    }
+}
+
+if ( ! function_exists('fa_jalali_format') ) {
+    function fa_jalali_format($format, $timestamp){
+        $gy = (int) gmdate('Y', $timestamp);
+        $gm = (int) gmdate('n', $timestamp);
+        $gd = (int) gmdate('j', $timestamp);
+        $j = fa_gregorian_to_jalali($gy, $gm, $gd);
+        $jy = $j[0]; $jm = $j[1]; $jd = $j[2];
+
+        $months = array('', 'فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند');
+        $week_full  = array('Sun'=>'یکشنبه','Mon'=>'دوشنبه','Tue'=>'سه‌شنبه','Wed'=>'چهارشنبه','Thu'=>'پنجشنبه','Fri'=>'جمعه','Sat'=>'شنبه');
+        $week_short = array('Sun'=>'ی','Mon'=>'د','Tue'=>'س','Wed'=>'چ','Thu'=>'پ','Fri'=>'ج','Sat'=>'ش');
+
+        $gD = gmdate('D', $timestamp);
+
+        $map = array(
+            'Y' => str_pad((string)$jy, 4, '0', STR_PAD_LEFT),
+            'y' => substr((string)$jy, -2),
+            'm' => str_pad((string)$jm, 2, '0', STR_PAD_LEFT),
+            'n' => (string)$jm,
+            'F' => $months[$jm],
+            'M' => $months[$jm],
+            'd' => str_pad((string)$jd, 2, '0', STR_PAD_LEFT),
+            'j' => (string)$jd,
+            'l' => $week_full[$gD],
+            'D' => $week_short[$gD],
+            'H' => gmdate('H', $timestamp),
+            'G' => gmdate('G', $timestamp),
+            'i' => gmdate('i', $timestamp),
+            's' => gmdate('s', $timestamp),
+            'A' => (gmdate('H', $timestamp) < 12) ? 'ق.ظ' : 'ب.ظ',
+            'a' => (gmdate('H', $timestamp) < 12) ? 'ق.ظ' : 'ب.ظ',
+        );
+
+        $out = '';
+        $len = strlen($format);
+        $escape = false;
+        for ($i = 0; $i < $len; $i++) {
+            $ch = $format[$i];
+            if ($escape) { $out .= $ch; $escape = false; continue; }
+            if ($ch === '\\') { $escape = true; continue; }
+            if ( isset($map[$ch]) ) { $out .= $map[$ch]; }
+            else { $out .= $ch; }
         }
+        return $out;
     }
-    return false;
 }
 
-// Helper function to remove product from next purchase list
-function rknm_remove_from_next_purchase($product_id, $variation_id = 0, $user_id = null) {
-    if (!$user_id)  $user_id = get_current_user_id();
-    if (!$user_id)  return false;
-
-    $next_purchase_list = get_user_meta($user_id, '_rknm_next_purchase_list', true);
-
-    if (!is_array($next_purchase_list))   return false;
-    $removed = false;
-    foreach ($next_purchase_list as $key => $item) {
-        if ($item['product_id'] == $product_id && $item['variation_id'] == $variation_id) {
-            unset($next_purchase_list[$key]);
-            $removed = true;
-            break;
+if ( ! function_exists('fa_filter_wp_date_jalali') ) {
+    function fa_filter_wp_date_jalali($output, $format, $timestamp){
+        if ( empty($timestamp) ) {
+            $timestamp = current_time('timestamp', true); // GMT
         }
-    }
-    if ($removed) {
-        update_user_meta($user_id, '_rknm_next_purchase_list', array_values($next_purchase_list));
-        do_action('rknm_removed_from_next_purchase', $product_id, $user_id);
-        return $next_purchase_list;
-    }
-    return false;
-}
-
-// Ajax handlers
-add_action('wp_ajax_rknm_move_to_next_purchase', 'rknm_ajax_move_to_next_purchase');
-add_action('wp_ajax_nopriv_rknm_move_to_next_purchase', 'rknm_ajax_move_to_next_purchase');
-function rknm_ajax_move_to_next_purchase() {
-    check_ajax_referer('rknm_next_purchase_nonce', 'nonce');
-
-    if (!is_user_logged_in()) {
-        wp_send_json_error(['message' => 'لطفا ابتدا وارد حساب کاربری خود شوید.']);
-        return;
-    }
-
-    $product_id = isset($_POST['product_id']) ? intval($_POST['product_id']) : 0;
-    $variation_id = isset($_POST['variation_id']) ? intval($_POST['variation_id']) : 0;
-    $cart_key = isset($_POST['cart_key']) ? sanitize_text_field($_POST['cart_key']) : '';
-
-    if (empty($cart_key)) {
-        wp_send_json_error(['message' => 'مشکلی پیش آمده، محصولی برای انتقال یافت نشد.']);
-        return;
-    }
-
-    // Get cart item to retrieve variation data
-    $cart_item = WC()->cart->get_cart_item($cart_key);
-    if (!$cart_item) {
-        wp_send_json_error(['message' => 'محصول در سبد خرید یافت نشد.']);
-        return;
-    }
-
-    $user_id = get_current_user_id();
-    $next_purchase_list = get_user_meta($user_id, '_rknm_next_purchase_list', true);
-
-    if (!is_array($next_purchase_list)) {
-        $next_purchase_list = [];
-    }
-
-    // Check if product already exists in next purchase list
-    if (rknm_product_exists_in_next_purchase($product_id, $variation_id, $user_id)) {
-        wp_send_json_error(['message' => 'این محصول قبلاً در لیست خرید بعدی شما قرار دارد.']);
-        return;
-    }
-
-    // Add to next purchase list, including variation data
-    $item_to_add = [
-        'product_id'   => $cart_item['product_id'],
-        'variation_id' => $cart_item['variation_id'],
-        'quantity'     => $cart_item['quantity'],
-        'variation'    => $cart_item['variation'], // This saves the attributes
-        'added_date'   => current_time('mysql', 1)
-    ];
-
-    $next_purchase_list[] = $item_to_add;
-    update_user_meta($user_id, '_rknm_next_purchase_list', $next_purchase_list);
-
-    // Remove from cart
-    $removed = WC()->cart->remove_cart_item($cart_key);
-
-    if($removed) {
-        do_action('rknm_added_to_next_purchase', $product_id, $user_id);
-
-        // Render the HTML for the new next purchase item
-        $item_html = rknm_render_next_purchase_item_html($item_to_add);
-
-        wp_send_json_success([
-            'message' => 'محصول به لیست خرید بعدی منتقل شد.',
-            'cart_count' => WC()->cart->get_cart_contents_count(),
-            'nextcart_count' => count($next_purchase_list),
-            'item_html' => $item_html, // Add HTML to the response
-        ]);
-    } else {
-        // If removal failed, revert adding to next purchase list
-        array_pop($next_purchase_list);
-        update_user_meta($user_id, '_rknm_next_purchase_list', $next_purchase_list);
-        wp_send_json_error(['message' => 'خطا در حذف محصول از سبد خرید.']);
+        $jalali = fa_jalali_format($format, $timestamp);
+        $convert_digits = true; // set false to disable Persian digits
+        if ( $convert_digits ) { $jalali = fa_jalali_digits($jalali); }
+        return $jalali;
     }
 }
 
-add_action('wp_ajax_rknm_remove_from_next_purchase', 'rknm_ajax_remove_from_next_purchase');
-function rknm_ajax_remove_from_next_purchase() {
-    check_ajax_referer('rknm_next_purchase_nonce', 'nonce');
-
-    if (!is_user_logged_in()) {
-        wp_die('User not logged in');
-    }
-
-    $product_id = intval($_POST['product_id']);
-    $variation_id = intval($_POST['variation_id']);
-
-    $user_id = get_current_user_id();
-    //$next_purchase_list = get_user_meta($user_id, '_rknm_next_purchase_list', true);
-
-    // Use helper function to remove from next purchase list
-    $next_purchase_list=rknm_remove_from_next_purchase($product_id, $variation_id, $user_id);
-
-    do_action('rknm_removed_from_next_purchase', $product_id, $user_id);
-
-    wp_send_json_success(array(
-        'message' => 'محصول از لیست خرید بعدی حذف شد.',
-        'nextcart_count' => is_array($next_purchase_list) ? count($next_purchase_list) : '0'
-    ));
+// ==== Hooks ====
+if ( ! is_admin() ) {
+    add_filter('wp_date', 'fa_filter_wp_date_jalali', 10, 3);
+    add_filter('date_i18n', 'fa_filter_wp_date_jalali', 10, 3);
 }
-
-add_action('wp_ajax_rknm_remove_from_cart', 'rknm_ajax_remove_from_cart');
-function rknm_ajax_remove_from_cart() {
-    check_ajax_referer('rknm_cart_nonce', 'nonce');
-
-    $product_id = intval($_POST['product_id']);
-    $variation_id = intval($_POST['variation_id']);
-    $cart_item_key = sanitize_text_field($_POST['cart_item_key']);
-
-    // Remove from cart
-   //$product_cart_id = WC()->cart->generate_cart_id( $product_id );
-   //$cart_item_key = WC()->cart->find_product_in_cart( $product_cart_id );
-    if ( $cart_item_key ) WC()->cart->remove_cart_item( $cart_item_key );
-
-     wp_send_json_success(array(
-        //'message' => $cart_item_key,
-        'message' => 'محصول از سبد خرید حذف شد.',
-        'cart_count' => WC()->cart->get_cart_contents_count()
-    ));
-}
-
-add_action('wp_ajax_rknm_add_to_cart_from_next_purchase', 'rknm_ajax_add_to_cart_from_next_purchase');
-function rknm_ajax_add_to_cart_from_next_purchase() {
-    check_ajax_referer('rknm_next_purchase_nonce', 'nonce');
-
-    if (!is_user_logged_in()) {
-        wp_send_json_error(['message' => 'لطفا ابتدا وارد حساب کاربری خود شوید.']);
-        return;
-    }
-
-    $product_id = isset($_POST['product_id']) ? intval($_POST['product_id']) : 0;
-    $variation_id = isset($_POST['variation_id']) ? intval($_POST['variation_id']) : 0;
-
-    $user_id = get_current_user_id();
-    $next_purchase_list = get_user_meta($user_id, '_rknm_next_purchase_list', true);
-
-    if (empty($next_purchase_list) || !is_array($next_purchase_list)) {
-        wp_send_json_error(['message' => 'لیست خرید بعدی شما خالی است.']);
-        return;
-    }
-
-    $item_to_add = null;
-    $item_key_to_remove = -1;
-
-    // Find the item in the next purchase list
-    foreach ($next_purchase_list as $key => $item) {
-        if (isset($item['product_id']) && $item['product_id'] == $product_id &&
-            isset($item['variation_id']) && $item['variation_id'] == $variation_id) {
-            $item_to_add = $item;
-            $item_key_to_remove = $key;
-            break;
-        }
-    }
-
-    if (!$item_to_add) {
-        wp_send_json_error(['message' => 'محصول مورد نظر در لیست خرید بعدی یافت نشد.']);
-        return;
-    }
-
-    $quantity = isset($item_to_add['quantity']) ? $item_to_add['quantity'] : 1;
-    $variation_data = isset($item_to_add['variation']) ? $item_to_add['variation'] : [];
-
-    // Add product to cart
-    $cart_item_key = WC()->cart->add_to_cart($product_id, $quantity, $variation_id, $variation_data);
-
-    if ($cart_item_key) {
-        // Remove from next purchase list using the found key
-        unset($next_purchase_list[$item_key_to_remove]);
-        update_user_meta($user_id, '_rknm_next_purchase_list', array_values($next_purchase_list));
-
-        // Render the HTML for the new cart item
-        $cart_item = WC()->cart->get_cart_item($cart_item_key);
-        ob_start();
-        rknm_render_cart_item_html($cart_item_key, $cart_item);
-        $item_html = ob_get_clean();
-
-        wp_send_json_success([
-            'message'        => 'محصول به سبد خرید اضافه شد.',
-            'cart_count'     => WC()->cart->get_cart_contents_count(),
-            'nextcart_count' => count($next_purchase_list),
-            'item_html'      => $item_html, // Add HTML to the response
-        ]);
-    } else {
-        wp_send_json_error(['message' => 'خطا در افزودن محصول به سبد خرید. ممکن است محصول ناموجود باشد.']);
-    }
-}
-
-// Helper function to render a single next purchase item HTML
-function rknm_render_next_purchase_item_html($item) {
-    $product_id = $item['product_id'];
-    $variation_id = isset($item['variation_id']) ? $item['variation_id'] : 0;
-    $product = wc_get_product($variation_id ? $variation_id : $product_id);
-
-    if (!$product) {
-        return '';
-    }
-
-    ob_start();
-    ?>
-    <a href="<?php echo esc_url($product->get_permalink()); ?>" style="width: 20%;">
-        <div class="rknm-next-purchase-item" data-product-id="<?php echo esc_attr($product_id); ?>" data-variation-id="<?php echo esc_attr($variation_id); ?>">
-            <div class="rknm-next-purchase-image"><?php echo $product->get_image(array(200, 200)); ?></div>
-            <div class="rknm-next-purchase-details">
-                <h3 class="Title_Product_H product-name"><?php echo esc_html($product->get_name()); ?></h3>
-                <span class="rknm-price-main"><?php echo $product->get_price_html(); ?></span>
-                 <?php if ($product->is_type('variation')): ?>
-                    <div class="rknm_attribute">
-                        <?php echo wc_get_formatted_variation($item['variation'], true); ?>
-                    </div>
-                <?php endif; ?>
-                <div class="rknm-next-purchase-actions">
-                    <button class="rknm-nextcart-add-btn" data-product-id="<?php echo esc_attr($product_id); ?>" data-variation-id="<?php echo esc_attr($variation_id); ?>">
-                        <img src="/rknm/pic/basket-10.svg" alt="افزودن به سبد" title="افزودن به سبد">
-                        افزودن به سبد
-                    </button>
-                    <button class="rknm-nextcart-remove-btn" data-product-id="<?php echo esc_attr($product_id); ?>" data-variation-id="<?php echo esc_attr($variation_id); ?>">
-                        <img src="/rknm/pic/recyclebin.svg" alt="حذف" title="حذف">
-                        حذف
-                    </button>
-                </div>
-            </div>
-        </div>
-    </a>
-    <?php
-    return ob_get_clean();
-}
-
-// Helper function to render a single cart item HTML
-function rknm_render_cart_item_html($cart_item_key, $cart_item) {
-    $_product   = apply_filters('woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key);
-    $product_id = apply_filters('woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key);
-    $tomanred='<img src="/rknm/pic/toman-red.svg" alt="تومان"title="تومان">';
-    $toman2='<img src="/rknm/pic/toman2.svg" alt="تومان"title="تومان">';
-
-    if ($_product && $_product->exists() && $cart_item['quantity'] > 0 && apply_filters('woocommerce_cart_item_visible', true, $cart_item, $cart_item_key)) {
-        $product_permalink = apply_filters('woocommerce_cart_item_permalink', $_product->is_visible() ? $_product->get_permalink($cart_item) : '', $cart_item, $cart_item_key);
-        ?>
-        <div class="rknm-oreder-cart-item cart_item" data-product-id="<?php echo esc_attr($product_id); ?>" data-variation-id="<?php echo esc_attr($cart_item['variation_id']); ?>">
-            <div class="rknm-r211">
-                <div style="width:200px;height:200px;justify-items:center;">
-                    <a href="<?php echo esc_url($product_permalink); ?>"><?php echo $_product->get_image(array(200, 200)); ?></a>
-                </div>
-            </div>
-            <div class="rknm-r212">
-                <h3 class="Title_Product_H product-name"><?php echo esc_html($_product->get_name()); ?></h3>
-                <div class="rknm_attribute">
-                    <?php echo wc_get_formatted_cart_item_data($cart_item); ?>
-                </div>
-                <span class="rknm_garanty">
-                   <img src="/rknm/pic/separ.svg" alt="گارانتی" title="گارانتی">
-                   <?php echo get_post_meta($product_id, '_rknm_seller_garanti', true); ?>
-                </span>
-                <span class="rknm_shop"><img src="/rknm/pic/shop.svg" alt="فروشنده" title="فروشنده"> آمتیس </span>
-                <div><?php echo rknm_express_shipping_func(['id' => $product_id, 'limit' => 4]); ?></div>
-            </div>
-            <div class="rknm-r213">
-                <div class="product-quantity" data-title="<?php esc_attr_e('Quantity', 'woocommerce'); ?>">
-                    <?php
-                    if ($_product->is_sold_individually()) {
-                        $product_quantity = sprintf('1 <input type="hidden" name="cart[%s][qty]" value="1" />', $cart_item_key);
-                    } else {
-                        $product_quantity = woocommerce_quantity_input(
-                            array(
-                                'input_name'   => "cart[{$cart_item_key}][qty]",
-                                'input_value'  => $cart_item['quantity'],
-                                'max_value'    => $_product->get_max_purchase_quantity(),
-                                'min_value'    => '0',
-                                'product_name' => $_product->get_name(),
-                            ),
-                            $_product,
-                            false
-                        );
-                    }
-                    echo apply_filters('woocommerce_cart_item_quantity', $product_quantity, $cart_item_key, $cart_item);
-                    ?>
-                    <div class="product-remove">
-                        <button class="rknm-cart-remove-btn" data-product-id="<?php echo esc_attr($product_id); ?>" data-variation-id="<?php echo esc_attr($cart_item['variation_id']); ?>" data-cart_item_key="<?php echo esc_attr($cart_item_key); ?>"><img src="/rknm/pic/recyclebin-red.svg" alt="حذف" title="حذف"></button>
-                    </div>
-                </div>
-            </div>
-            <div class="rknm-r214">
-                <div>
-                  <span class="product-sale_subtotal" style="color:red ;font-size:0.9rem;">
-                    <?php echo wc_price(($_product->get_regular_price() - $_product->get_sale_price()) * $cart_item['quantity']).$tomanred; ?>&nbsp; تخفیف
-                  </span><br>
-                  <span class="product-subtotal" style="color:#000;font-size:1.3rem;font-weight:500;">
-                    <?php echo wc_price($_product->get_sale_price() * $cart_item['quantity']).$toman2; ?>
-                  </span>
-                </div>
-            </div>
-            <div class="rknm-r215">
-                <div><?php echo rknm_add_move_to_next_purchase_button($cart_item_key, $product_id, $cart_item['variation_id']); ?></div>
-            </div>
-            <div class="rknm-r216">
-                <hr style=" margin:10px -20px;  border-top: 1px solid #E6E6E6; ">
-            </div>
-        </div>
-        <?php
-    }
-}
-
-
-add_action('wp_ajax_rknm_add_all_to_cart_from_next_purchase', 'rknm_ajax_add_all_to_cart_from_next_purchase');
-function rknm_ajax_add_all_to_cart_from_next_purchase() {
-    check_ajax_referer('rknm_next_purchase_nonce', 'nonce');
-
-    if (!is_user_logged_in()) {
-        wp_die('User not logged in');
-    }
-
-    $user_id = get_current_user_id();
-    $next_purchase_list = get_user_meta($user_id, '_rknm_next_purchase_list', true);
-
-    if (empty($next_purchase_list) || !is_array($next_purchase_list)) {
-        wp_send_json_error(array(
-            'message' => 'لیست خرید بعدی خالی است.'
-        ));
-    }
-
-    $success_count = 0;
-    $error_count = 0;
-    $added_products = [];
-
-    foreach ($next_purchase_list as $item) {
-        $product_id = intval($item['product_id']);
-        $variation_id = isset($item['variation_id']) ? intval($item['variation_id']) : 0;
-        //if($product_id==$variation_id) $variation_id=0;
-
-        // Check if product exists and is purchasable
-        $product = wc_get_product($product_id);
-        if (!$product || !$product->is_purchasable()) {
-            $error_count++;
-            continue;
-        }
-
-        // Add to cart
-        $cart_item_key = WC()->cart->add_to_cart($product_id, 1, $variation_id);
-
-        if ($cart_item_key) {
-            $success_count++;
-            $added_products[] = array(
-                'product_id' => $product_id,
-                'variation_id' => $variation_id
-            );
-        } else {
-            $error_count++;
-        }
-    }
-
-    // Remove all successfully added products from next purchase list
-    foreach ($added_products as $product) {
-        $next_purchase_list=rknm_remove_from_next_purchase($product['product_id'], $product['variation_id'], $user_id);
-    }
-
-    if ($success_count > 0) {
-        $message = sprintf('تعداد %d محصول با موفقیت به سبد خرید اضافه شد.', $success_count);
-        if ($error_count > 0) {
-            $message .= sprintf(' تعداد %d محصول به دلیل عدم موجودی یا خطا اضافه نشد.', $error_count);
-        }
-
-        wp_send_json_success(array(
-            'message' => $message,
-            'cart_count' => WC()->cart->get_cart_contents_count(),
-            'nextcart_count' => $error_count
-        ));
-    } else {
-        wp_send_json_error(array(
-            'message' => 'هیچ محصولی به سبد خرید اضافه نشد.'
-        ));
-    }
-}
-
 
 
 ?>
