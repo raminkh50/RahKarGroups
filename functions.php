@@ -23,8 +23,21 @@ add_action('wp_enqueue_scripts',function () {
 /* حذف zlib*/
 remove_action( 'shutdown', 'wp_ob_end_flush_all', 1 );
 
+// Disable lazy loading & Add fetchpriority="high" to main WooCommerce product image
+add_filter( 'wp_get_attachment_image_attributes',
+function ( $attr, $attachment, $size ) {
+if ( is_product() && isset( $attr['class'] ) && strpos ( $attr['class'], 'wp-post-image' ) !== false){
+// Disable lazy loading for the LCP image
+unset ( $attr['loading'] );
+// Add fetchpriority to prioritize this image
+$attr ['fetchpriority'] = 'high' ;
+}
+return $attr;
+}, 10, 3 );
+
 if (class_exists('WooCommerce'))  {
 	require_once('function-script.php');
+    require_once('function-wishlist-ajax.php');
 	require_once('function-cart-ajax.php');
 	require_once('pre-test.php');
 	require_once('function-wc.php');
@@ -202,7 +215,7 @@ echo '<style type="text/css">@font-face{font-family:"FontF-Ramin";
 	height: 35px;
 	width: 177px;
     background-size: 178px;
-    background-image: url(/rknm/pic/logo-RahKarNegarCo-color@2x.png);  
+    background-image: url(/rknm/pic/logo-RahKarNegarCo-color@2x.webp);  
 }
 .login form {
 	padding: 26px 24px 75px 26px !important;
