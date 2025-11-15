@@ -37,6 +37,7 @@ return $attr;
 
 if (class_exists('WooCommerce'))  {
 	require_once('function-script.php');
+	require_once('rknm-add_to_cart_popup-ajax.php');
     require_once('function-wishlist-ajax.php');
 	require_once('function-cart-ajax.php');
 	require_once('pre-test.php');
