@@ -360,16 +360,13 @@ jQuery(document).ready(function ($) {
   window.opentabs = function (evt, tabsName) {
     let i, tabscontent, tabslinks;
     tabscontent = document.getElementsByClassName("tabscontent");
-
     for (i = 0; i < tabscontent.length; i++) {
       tabscontent[i].style.display = "none";
     }
     tabslinks = document.getElementsByClassName("tabslinks");
-
     for (i = 0; i < tabslinks.length; i++) {
       tabslinks[i].className = tabslinks[i].className.replace(" active", "");
     }
-
     // Use jQuery to show the tab content to avoid issues after AJAX replacement
     $("#" + tabsName).show();
     evt.currentTarget.className += " active";
