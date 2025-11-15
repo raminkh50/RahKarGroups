@@ -10,10 +10,9 @@ $basket_svg= '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns=
 <path d="M20 22C20.5523 22 21 21.5523 21 21C21 20.4477 20.5523 20 20 20C19.4477 20 19 20.4477 19 21C19 21.5523 19.4477 22 20 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 1H5L7.68 14.39C7.77144 14.8504 8.02191 15.264 8.38755 15.5583C8.75318 15.8526 9.2107 16.009 9.68 16H19.4C19.8693 16.009 20.3268 15.8526 20.6925 15.5583C21.0581 15.264 21.3086 14.8504 21.4 14.39L23 6H6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 $close_svg='<svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.29289 5.29289C5.68342 4.90237 6.31658 4.90237 6.70711 5.29289L12 10.5858L17.2929 5.29289C17.6834 4.90237 18.3166 4.90237 18.7071 5.29289C19.0976 5.68342 19.0976 6.31658 18.7071 6.70711L13.4142 12L18.7071 17.2929C19.0976 17.6834 19.0976 18.3166 18.7071 18.7071C18.3166 19.0976 17.6834 19.0976 17.2929 18.7071L12 13.4142L6.70711 18.7071C6.31658 19.0976 5.68342 19.0976 5.29289 18.7071C4.90237 18.3166 4.90237 17.6834 5.29289 17.2929L10.5858 12L5.29289 6.70711C4.90237 6.31658 4.90237 5.68342 5.29289 5.29289Z" fill="#0F1729"/>
 </svg>';
-$toman_svg='<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" style="width:16px;height:16px;fill:#000"><defs><symbol xmlns="http://www.w3.org/2000/svg" id="a" viewBox="0 0 14 14"><path fill-rule="evenodd" d="M3.057 1.742 3.821 1l.78.75-.776.741zm3.23 2.48q0 .933-.478 1.467-.301.332-.783.505a3.3 3.3 0 0 1-1.083.163h-.555q-.632 0-1.139-.223a2.05 2.05 0 0 1-.9-.738A2.24 2.24 0 0 1 1 4.148q0-.088.004-.176.044-.824.525-1.827l1.095.484q-.386.798-.419 1.403-.003.06-.004.12 0 .378.166.618a.9.9 0 0 0 .5.354q.128.042.278.06.119.014.243.014h.555q.687 0 .933-.244.21-.209.21-.731V2.02h1.2v2.202zm5.433 3.184-.72-.7.709-.706.735.707-.724.7zm-2.856.308q.813 0 1.293.569.445.519.445 1.293v.364h.18v-.004h.41q.332 0 .467-.084a.28.28 0 0 0 .14-.258v-.069c.004-.243.017-1.044 0-1.115L13 8.05v1.574a1.4 1.4 0 0 1-.287.863q-.459.607-1.495.607h-.627q-.092 1.1-1.117 1.573a3.6 3.6 0 0 1-.937.265 6 6 0 0 1-.914.067V11.84q.918 0 1.38-.247.376-.198.376-.499h-.515q-.654 0-1.113-.339-.55-.41-.55-1.18 0-.732.367-1.24.444-.622 1.296-.622zm.533 2.226v-.364q0-.325-.143-.516a.46.46 0 0 0-.39-.187.48.48 0 0 0-.396.187.7.7 0 0 0-.136.449l.003.067q.011.188.177.283.14.08.352.08h.533zM9.5 6.707l.72.7.724-.7L10.209 6zm-6.694 4.888h.03q.65-.014.937-.29.037.018.12.068l.074.039.081.042q.202.11.379.18.517.22.977.22a1.22 1.22 0 0 0 .87-.34q.45-.428.449-1.286a2.2 2.2 0 0 0-.335-1.145q-.448-.685-1.3-.685a1.56 1.56 0 0 0-1.242.575q-.169.198-.294.456-.048.092-.084.191a1 1 0 0 0-.03.078l-.022.06q-.154.463-.205.53-.108.136-.427.147-.185-.007-.256-.076-.085-.081-.085-.297V7l-1.201-.5v3.562q0 .392.143.703.107.237.29.413.184.177.43.28.297.127.665.136v.001zm2.752-1.014a.8.8 0 0 0 .044-.353.87.87 0 0 0-.165-.47q-.15-.201-.35-.201-.27 0-.447.31-.063.106-.114.262l-.04.12-.015.053-.015.046q.213.177.544.293.27.093.433.092.066 0 .125-.152" clip-rule="evenodd"/></symbol></defs><use xlink:href="#a"/></svg>';
+$toman_svg='<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" style="width:16px;height:16px;fill:var(--color-icon-high-emphasis)"><defs><symbol xmlns="http://www.w3.org/2000/svg" id="a" viewBox="0 0 14 14"><path fill-rule="evenodd" d="M3.057 1.742 3.821 1l.78.75-.776.741zm3.23 2.48q0 .933-.478 1.467-.301.332-.783.505a3.3 3.3 0 0 1-1.083.163h-.555q-.632 0-1.139-.223a2.05 2.05 0 0 1-.9-.738A2.24 2.24 0 0 1 1 4.148q0-.088.004-.176.044-.824.525-1.827l1.095.484q-.386.798-.419 1.403-.003.06-.004.12 0 .378.166.618a.9.9 0 0 0 .5.354q.128.042.278.06.119.014.243.014h.555q.687 0 .933-.244.21-.209.21-.731V2.02h1.2v2.202zm5.433 3.184-.72-.7.709-.706.735.707-.724.7zm-2.856.308q.813 0 1.293.569.445.519.445 1.293v.364h.18v-.004h.41q.332 0 .467-.084a.28.28 0 0 0 .14-.258v-.069c.004-.243.017-1.044 0-1.115L13 8.05v1.574a1.4 1.4 0 0 1-.287.863q-.459.607-1.495.607h-.627q-.092 1.1-1.117 1.573a3.6 3.6 0 0 1-.937.265 6 6 0 0 1-.914.067V11.84q.918 0 1.38-.247.376-.198.376-.499h-.515q-.654 0-1.113-.339-.55-.41-.55-1.18 0-.732.367-1.24.444-.622 1.296-.622zm.533 2.226v-.364q0-.325-.143-.516a.46.46 0 0 0-.39-.187.48.48 0 0 0-.396.187.7.7 0 0 0-.136.449l.003.067q.011.188.177.283.14.08.352.08h.533zM9.5 6.707l.72.7.724-.7L10.209 6zm-6.694 4.888h.03q.65-.014.937-.29.037.018.12.068l.074.039.081.042q.202.11.379.18.517.22.977.22a1.22 1.22 0 0 0 .87-.34q.45-.428.449-1.286a2.2 2.2 0 0 0-.335-1.145q-.448-.685-1.3-.685a1.56 1.56 0 0 0-1.242.575q-.169.198-.294.456-.048.092-.084.191a1 1 0 0 0-.03.078l-.022.06q-.154.463-.205.53-.108.136-.427.147-.185-.007-.256-.076-.085-.081-.085-.297V7l-1.201-.5v3.562q0 .392.143.703.107.237.29.413.184.177.43.28.297.127.665.136v.001zm2.752-1.014a.8.8 0 0 0 .044-.353.87.87 0 0 0-.165-.47q-.15-.201-.35-.201-.27 0-.447.31-.063.106-.114.262l-.04.12-.015.053-.015.046q.213.177.544.293.27.093.433.092.066 0 .125-.152" clip-rule="evenodd"/></symbol></defs><use xlink:href="#a"/></svg>';
 
 $garanti_svg='';
-
 
 // Functions for cart and next purchase AJAX functionality
 // Helper function to check if product exists in next purchase list
@@ -184,7 +183,7 @@ function rknm_ajax_remove_from_next_purchase() {
         'nextcart_count' => $count_cartnext
     ));
 }
-
+// Del from cart
 add_action('wp_ajax_rknm_remove_from_cart', 'rknm_ajax_remove_from_cart');
 function rknm_ajax_remove_from_cart() {
     check_ajax_referer('rknm_cart_nonce', 'nonce');
@@ -192,20 +191,9 @@ function rknm_ajax_remove_from_cart() {
     $product_id = intval($_POST['product_id']);
     $variation_id = intval($_POST['variation_id']);
     $cart_item_key = sanitize_text_field($_POST['cart_item_key']);
-    
-    // Remove from cart
-   //$product_cart_id = WC()->cart->generate_cart_id( $product_id );
-   //$cart_item_key = WC()->cart->find_product_in_cart( $product_cart_id );
     if ( $cart_item_key ) rknm_helper_del_from_cart($cart_item_key,null, null,null);
-       /*if ( $cart_item_key ) WC()->cart->remove_cart_item( $cart_item_key );
-    
-     wp_send_json_success(array(
-        //'message' => $cart_item_key,
-        'message' => 'محصول از سبد خرید حذف شد.',
-        'cart_count' => WC()->cart->get_cart_contents_count()
-    ));*/
 }
-
+// CartNext --> cart
 add_action('wp_ajax_rknm_add_to_cart_from_next_purchase', 'rknm_ajax_add_to_cart_from_next_purchase');
 function rknm_ajax_add_to_cart_from_next_purchase() {
     check_ajax_referer('rknm_next_purchase_nonce', 'nonce');
@@ -275,7 +263,7 @@ function rknm_ajax_add_to_cart_from_next_purchase() {
         wp_send_json_error(['message' => 'محصول به سبد خرید اضافه نشد.']);
     }
 }
-
+// All cartnext --> Cart
 add_action('wp_ajax_rknm_add_all_to_cart_from_next_purchase', 'rknm_ajax_add_all_to_cart_from_next_purchase');
 function rknm_ajax_add_all_to_cart_from_next_purchase() {
     check_ajax_referer('rknm_next_purchase_nonce', 'nonce');
@@ -356,7 +344,7 @@ function rknm_ajax_add_all_to_cart_from_next_purchase() {
         'html_next_purchase' => $next_purchase_html,
     ]);
 }
-
+// Tab Cart
 function cart_basket($cart_item_s,$count_cart){
 
 if ( $count_cart>0 ) :
@@ -370,7 +358,9 @@ $count=0;
 <!-------r----->
 <div class="rknm-r">
 <div class="rknm-r1" style="display:flex;flex-direction:row;width:100%;align-items:normal;padding:10px;
-text-align:right;"> سبد خرید شما <?php echo esc_attr($count_cart); ?> مرسوله    | 
+text-align:right;">
+<span>سبد خرید شما <?php echo esc_attr($count_cart); ?> مرسوله</span>
+<button class="rknm-cart-remove-btn">||</button>
 </div> <!-- //rknm-r1 -->
 <div class="rknm-r2" style="display:flex;flex-direction:row;width:100%;align-items:normal;padding:10px;text-align:right;">
 <div class="rknm-r21" style="display:flex;flex-direction:row;width:100%;align-items:normal;padding:10px;text-align:right;flex-wrap:wrap;">
@@ -382,10 +372,6 @@ foreach ($cart_item_s->get_cart() as $cart_item_key => $cart_item) :
 
    $product = $cart_item['data'];
    $quantity = $cart_item['quantity'];
-
-   //$variation_id1 = $product->get_id();
-   //$product_id1= $cart_item['product_id'];
-
    $variation_id_cart = $product->get_id();
    $product_id_cart= $cart_item['product_id'];
 
@@ -399,15 +385,13 @@ foreach ($cart_item_s->get_cart() as $cart_item_key => $cart_item) :
    $sum_sale_price += $r_sale_price * $quantity;
    //$colors = $product->get_attributes();
    //foreach ($colors as $value) ;
-   
-   //print_r($product);
-   
+      
 ?>
 <!--<div class="woocommerce-cart-form__cart-item woocommerce_cart_item_class "-->
 <div class="rknm-oreder-cart-item cart_item"
  data-product-id=" <?php echo esc_attr($product_id_cart); ?>" data-variation-id="<?php echo esc_attr($variation_id_cart); ?>">
 <div class="rknm-r211">
-<div style="width:200px;height:200px;justify-items:center;">
+<div class="pic">
   <a href="<?php echo esc_url($link); ?>"><?php echo $product->get_image(array(200, 200)); ?></a>
 </div>
 </div> <!--//rknm-r211 -->
@@ -416,7 +400,6 @@ foreach ($cart_item_s->get_cart() as $cart_item_key => $cart_item) :
 <div class="rknm_attribute">
 <?php 
 if ($product->is_type('variation')) : 
-
     $attributes = $product->get_attributes();//$product->get_attributes()s[pa_color]
     //print_r($attributes);
     foreach ($attributes as $value) :
@@ -463,7 +446,7 @@ if ($product->is_type('variation')) :
  echo apply_filters( 'woocommerce_cart_item_quantity', $product_quantity, $cart_item_key, $cart_item ); 
 ?>
 <div class="product-remove">
-    <button  class="rknm-cart-remove-btn" id="rknm-cart-del-btn" data-product-id=" <?php echo esc_attr($product_id_cart); ?>" data-variation-id="<?php echo esc_attr($variation_id_cart); ?>" data-cart_item_key="<?php echo esc_attr($cart_item_key); ?>" ><?php echo $del_svg; ?>
+    <button  class="rknm-cart-remove-btn" id="rknm-cart-del-btn" data-product-id=" <?php echo esc_attr($product_id_cart); ?>" data-variation-id="<?php echo esc_attr($variation_id_cart); ?>" data-cart_item_key="<?php echo esc_attr($cart_item_key); ?>" ><?php echo $GLOBALS['del_svg']; ?>
     </button>
 </div>
 
@@ -472,15 +455,15 @@ if ($product->is_type('variation')) :
 <div class="rknm-r214">
 <div>
   <span class="product-sale_subtotal" style="color:red ;font-size:0.9rem;">
-    <?php echo wc_price(($r_regular_price-$r_sale_price)*$quantity).$toman_svg; ?>&nbsp; تخفیف 
+    <?php echo number_format(($r_regular_price-$r_sale_price)*$quantity).$GLOBALS['toman_svg']; ?>&nbsp; تخفیف 
   </span><br>
   <span class="product-subtotal" style="color:#000;font-size:1.3rem;font-weight:500;">
-    <?php echo wc_price($r_sale_price*$quantity).$toman_svg; ?>
+    <?php echo number_format($r_sale_price*$quantity).$GLOBALS['toman_svg']; ?>
   </span>
 </div>
 </div> <!--//rknm-r214 -->
 <div class="rknm-r215">
-<div> <?php echo rknm_add_move_to_next_purchase_button(/*$product_name, $cart_item,*/ $cart_item_key,$product_id_cart,$variation_id_cart); ?></div>
+<div><?php echo rknm_add_move_to_next_purchase_button($cart_item_key,$product_id_cart,$variation_id_cart);?></div>
 </div> <!--//rknm-r215 -->
 <div class="rknm-r216">
 <hr style=" margin:10px 0;  border-top: 1px solid #E6E6E6; ">
@@ -501,11 +484,11 @@ if ($product->is_type('variation')) :
     $save_payment =   $sum_regular_price-$sum_sale_price;
 ?>    
 <span style="width:100%;display:flex;justify-content: space-between;font-size:.8rem;">
-			قیمت کالاها (<?php echo $count_cart; ?>) <div><?php echo wc_price($sum_regular_price).$toman_svg; ?></div></span>
+			قیمت کالاها (<?php echo $count_cart; ?>) <div><?php echo number_format($sum_regular_price).$GLOBALS['toman_svg']; ?></div></span>
 <span style="width:100%;color:#000;display:flex;justify-content: space-between;font-size:.8rem;">
-			جمع سبد خرید <div><?php echo wc_price($sum_sale_price).$toman_svg; ?></div></span>
+			جمع سبد خرید <div><?php echo number_format($sum_sale_price).$GLOBALS['toman_svg']; ?></div></span>
 <span style="width:100%;color:green;display:flex;justify-content: space-between;font-size:.9rem;">
-			سود شما از خرید (<?php echo $count_cart; ?>) <div><?php echo wc_price($save_payment).$toman_svg; ?></div></span>
+			سود شما از خرید (<?php echo $count_cart; ?>) <div><?php echo number_format($save_payment).$GLOBALS['toman_svg']; ?></div></span>
 <div class="rknm-cart-main-payment">
 	  	  <a href="<?php echo esc_url(wc_get_checkout_url()); ?>" class="rknm-cart-popup-button">تایید و تکمیل سفارش</a>
 </div>
@@ -519,9 +502,8 @@ if ($product->is_type('variation')) :
 از هدایای ویژه ما ، در فروشگاه استفاده کنید
 </div> <!--//rknm-l3-->
 <div class="rknm-l4">
-با مهرتان آینده کودکان را بسازید
-مشاهده
-کمک به تامین نیازهای کودکان جامانده از تحصیل
+<span style="display:flex;margin-bottom:10px;"><img src="/rknm/pic/heart.svg" style="width:24px;">به سبد خریدتان مهر اضافه کنید</span>
+کمک به مددجویان و خیریه‌ها، به انتخاب خودتان
 </div> <!--//rknm-l4-->
 </div> <!--//rknm-l-->
     
@@ -532,7 +514,7 @@ if ($product->is_type('variation')) :
 </div>
 <div style="width:40%;display:flex;flex-direction:column;align-items:flex-end;">
 <span  style="color:gray;font-size:.8rem;">	جمع سبد خرید </span>
-<span  style="color:#000;font-size:1.3rem;"><?php echo wc_price($sum_sale_price); ?></span>
+<span  style="color:#000;font-size:1.3rem;"><?php echo number_format($sum_sale_price).$GLOBALS['toman_svg']; ?></span>
 </div>
 </div> <!--//rknm-cart-mob-payment-->
 
@@ -560,7 +542,7 @@ function next_purchase($next_purchase_list,$count_nextcart){
 </div>
 <div class="rknm-next-purchase-header-actions">
 <button class="rknm-nextcart-add-all-to-cart-btn" id="rknmAddAllToCart">
-<?php echo $basket_svg; ?>
+<?php echo $GLOBALS['basket_svg']; ?>
 انتقال همه به سبد خرید  >
 </button>
 <!--</div>-->
@@ -585,18 +567,18 @@ function next_purchase($next_purchase_list,$count_nextcart){
             
             if (!$product) continue;
             
-        ?>  <a href="<?php echo esc_url($product->get_permalink()); ?>" style="width: 20%;">
+        ?>  <a href="<?php echo esc_url($product->get_permalink()); ?>" >
             <div class="rknm-next-purchase-item" data-product-id="<?php echo esc_attr($product_id_nextcart); ?>" data-variation-id="<?php echo esc_attr($variation_id_nextcart); ?>">
             <div class="rknm-next-purchase-image"><?php echo $product->get_image(array(200, 200)); ?></div>
             <div class="rknm-next-purchase-details">
             <h3 class="Title_Product_H product-name"><?php echo esc_html($product->get_title());?></h3>
             <span class="rknm-price-main"><?php echo $product->get_price_html(); ?></span>
             <div class="rknm-next-purchase-actions">
-            <button class="rknm-nextcart-add-btn" id="rknm-cartnext-to-cart-btn" data-product-id="<?php echo esc_attr($product_id_nextcart); ?>" data-variation-id="<?php echo esc_attr($variation_id_nextcart); ?>">
-            <?php echo $basket_svg; ?>
+            <button class="rknm-add-btn" id="rknm-cartnext-to-cart-btn" data-product-id="<?php echo esc_attr($product_id_nextcart); ?>" data-variation-id="<?php echo esc_attr($variation_id_nextcart); ?>">
+            <?php echo $GLOBALS['basket_svg']; ?>
             افزودن به سبد</button>
-            <button class="rknm-nextcart-remove-btn" id="rknm-cartnext-del-btn" data-product-id="<?php echo esc_attr($product_id_nextcart); ?>" data-variation-id="<?php echo esc_attr($variation_id_nextcart);?>">
-            <?php echo $del_svg; ?>
+            <button class="rknm-del-btn" id="rknm-cartnext-del-btn" data-product-id="<?php echo esc_attr($product_id_nextcart); ?>" data-variation-id="<?php echo esc_attr($variation_id_nextcart);?>">
+            <?php echo $GLOBALS['del_svg']; ?>
             حذف</button>
             </div>
             </div>
@@ -623,4 +605,3 @@ function rknm_add_move_to_next_purchase_button( $cart_item_key,$product_id,$vari
     
     return  $button;
 }
-
