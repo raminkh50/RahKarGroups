@@ -333,5 +333,20 @@ if ( ! is_admin() ) {
     add_filter('date_i18n', 'fa_filter_wp_date_jalali', 10, 3);
 }
 
+function rknm_find_product_in_cart( $product_id ) {
+    if ( WC()->cart->is_empty() ) {
+        return false;
+    }
 
+    foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+        if ( $cart_item['product_id'] == $product_id ) {
+            return array(
+                'cart_item_key' => $cart_item_key,
+                'quantity'      => $cart_item['quantity'],
+            );
+        }
+    }
+
+    return false;
+}
 ?>

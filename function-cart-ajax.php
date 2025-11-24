@@ -438,6 +438,7 @@ if ($product->is_type('variation')) :
             'max_value'    => $max_quantity,
             'min_value'    => $min_quantity,
             'product_name' => $product_name,
+            'cart_item_key' => $cart_item_key,
         ),
         $product,
         false
@@ -604,4 +605,53 @@ function rknm_add_move_to_next_purchase_button( $cart_item_key,$product_id,$vari
     $button .= '</div>';
     
     return  $button;
+}
+
+// Update cart quantity
+add_action('wp_ajax_rknm_update_cart_quantity', 'rknm_ajax_update_cart_quantity');
+function rknm_ajax_update_cart_quantity() {
+    check_ajax_referer('rknm_cart_nonce', 'nonce');
+
+    $cart_item_key = sanitize_text_field($_POST['cart_item_key']);
+    $quantity = intval($_POST['quantity']);
+
+    if ( $cart_item_key && $quantity >= 0 ) {
+        // If quantity is 0, the item will be removed
+        $updated = WC()->cart->set_quantity($cart_item_key, $quantity);
+
+        if ($updated) {
+            ob_start();
+            cart_basket(WC()->cart, $count_cart = WC()->cart->get_cart_contents_count());
+            $cart_html = ob_get_clean();
+
+            wp_send_json_success([
+                'message'        => 'سبد خرید با موفقیت به‌روزرسانی شد.',
+                'cart_count'     => $count_cart,
+                'html_cart_basket' => $cart_html,
+            ]);
+        } else {
+            wp_send_json_error(['message' => 'خطا در به‌روزرسانی سبد خرید.']);
+        }
+    } else {
+        wp_send_json_error(['message' => 'اطلاعات ارسال شده نامعتبر است.']);
+    }
+}
+
+add_action('wp_ajax_rknm_add_to_cart_single_product', 'rknm_ajax_add_to_cart_single_product');
+function rknm_ajax_add_to_cart_single_product() {
+    check_ajax_referer('rknm_cart_nonce', 'nonce');
+
+    $product_id = absint($_POST['product_id']);
+    $quantity = 1;
+
+    $cart_item_key = WC()->cart->add_to_cart($product_id, $quantity);
+
+    if ($cart_item_key) {
+        wp_send_json_success(array(
+            'message' => 'محصول با موفقیت به سبد خرید اضافه شد',
+            'cart_item_key' => $cart_item_key,
+        ));
+    } else {
+        wp_send_json_error(array('message' => 'خطا در افزودن محصول به سبد خرید'));
+    }
 }
