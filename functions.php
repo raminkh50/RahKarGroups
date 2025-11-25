@@ -333,5 +333,68 @@ if ( ! is_admin() ) {
     add_filter('date_i18n', 'fa_filter_wp_date_jalali', 10, 3);
 }
 
+function rknm_find_product_in_cart( $product_id ) {
+    if ( WC()->cart->is_empty() ) {
+        return false;
+    }
 
+    foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+        if ( $cart_item['product_id'] == $product_id ) {
+            return array(
+                'cart_item_key' => $cart_item_key,
+                'quantity'      => $cart_item['quantity'],
+            );
+        }
+    }
+
+    return false;
+}
+
+function rknm_find_variable_product_in_cart( $product_id, $variation_id ) {
+    if ( WC()->cart->is_empty() ) {
+        return false;
+    }
+
+    foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+        if ( $cart_item['product_id'] == $product_id && $cart_item['variation_id'] == $variation_id ) {
+            return array(
+                'cart_item_key' => $cart_item_key,
+                'quantity'      => $cart_item['quantity'],
+            );
+        }
+    }
+
+    return false;
+}
+
+remove_action( 'woocommerce_single_variation', 'woocommerce_single_variation_add_to_cart_button', 20 );
+add_action( 'woocommerce_single_variation', 'rknm_variable_add_to_cart', 20 );
+function rknm_variable_add_to_cart() {
+    global $product;
+    ?>
+    <div class="woocommerce-variation-add-to-cart variations_button">
+        <?php
+        $cart_item = rknm_find_product_in_cart($product->get_id());
+        $is_in_cart = $cart_item !== false;
+        ?>
+        <div class="quantity_wrapper" <?php echo $is_in_cart ? '' : 'style="display:none;"'; ?>>
+            <?php
+            woocommerce_quantity_input(
+                array(
+                    'min_value'   => 1,
+                    'max_value'   => $product->get_max_purchase_quantity(),
+                    'input_value' => $is_in_cart ? $cart_item['quantity'] : 1,
+                )
+            );
+            ?>
+        </div>
+        <button type="submit" class="single_add_to_cart_button button alt" <?php echo $is_in_cart ? 'style="display:none;"' : ''; ?>>
+            <?php echo esc_html( $product->single_add_to_cart_text() ); ?>
+        </button>
+        <input type="hidden" name="add-to-cart" value="<?php echo absint( $product->get_id() ); ?>" />
+        <input type="hidden" name="product_id" value="<?php echo absint( $product->get_id() ); ?>" />
+        <input type="hidden" name="variation_id" class="variation_id" value="0" />
+    </div>
+    <?php
+}
 ?>
