@@ -22,6 +22,7 @@ if ( is_product() || is_cart() || is_shop() || is_product_category() ) {
 if (is_cart() /*|| is_account_page()*/) {
     rknm_loder_wp_enqueue('rknm-cart','js','css',$path_dir,$path_dir_main);
     rknm_loder_wp_enqueue('toastr.min','js','css',$path_dir,$path_dir_main);
+    rknm_loder_wp_enqueue('rknm-quantity','js','css',$path_dir,$path_dir_main);
 }
 /*لایک و دیس لایک */
 if ( is_single() || is_product() ) {
@@ -42,6 +43,7 @@ if ( is_product() ) {
     rknm_loder_wp_enqueue('rknm-cross_sells','','css',$path_dir,$path_dir_main);
     rknm_loder_wp_enqueue('rknm-dynamic_note_scroll','js','css',$path_dir,$path_dir_main);
     rknm_loder_wp_enqueue('rknm-swatches','js','',$path_dir,$path_dir_main);
+    rknm_loder_wp_enqueue('rknm-quantity','js','css',$path_dir,$path_dir_main);
 
     //wp_enqueue_script('chart-js-fallback',$path_dir.'/assets/js/chart.umd.min.js',[],'v4.4.4', true);
     rknm_loder_wp_enqueue('chart.umd.min','js','',$path_dir,$path_dir_main);
@@ -87,11 +89,11 @@ if ( is_product() || is_account_page()) {
     ));
 }
 if (is_cart() /*|| is_account_page()*/) {
-        wp_localize_script('jquery', 'rknm_ajax', array( //rknm-cart-js
+        wp_localize_script('rknm-cart-js', 'rknm_ajax', array(
             'ajax_url' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('rknm_next_purchase_nonce')
         ));
-        wp_localize_script('jquery', 'rknm_ajax_cart', array( //rknm-cart-js
+        wp_localize_script('rknm-quantity-js', 'rknm_ajax_cart', array(
             'ajax_url' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('rknm_cart_nonce')
         ));        
