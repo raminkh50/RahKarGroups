@@ -1,3 +1,6 @@
+/**
+ * rknm-cart.js
+ * */
 jQuery(document).ready(function ($) {
   toastr.options = {
     timeOut: 3000,
@@ -215,81 +218,6 @@ jQuery(document).ready(function ($) {
         $("#rknm-nextcart-del-modal")
           .removeClass("show")
           .addClass("rknm-hidden");
-      });
-  });
-
-  //5-Del(Cart)
-  $(document).on("click", "#rknm-cart-del-btn", function (e) {
-    e.preventDefault();
-    var $btn = $(this);
-    var productId = $btn.data("product-id");
-    var variationId = $btn.data("variation-id");
-    var cartitemkey = $btn.data("cart_item_key");
-
-    // Show custom confirmation popup
-    $("#rknm-cart-del-modal").removeClass("rknm-hidden").addClass("show");
-    // Handle confirm button
-    $("#rknm-cart-remove-modal-confirm")
-      .off("click")
-      .on("click", function () {
-        var $confirmBtn = $(this);
-        $confirmBtn
-          .addClass("loading")
-          .prop("disabled", true)
-          .text("در حال حذف...");
-
-        $.ajax({
-          url: rknm_ajax_cart.ajax_url,
-          type: "POST",
-          data: {
-            action: "rknm_remove_from_cart",
-            product_id: productId,
-            variation_id: variationId,
-            cart_item_key: cartitemkey,
-            nonce: rknm_ajax_cart.nonce,
-          },
-
-          success: function (response) {
-            if (response.success) {
-              // Remove item from display
-              $btn.closest(".rknm-oreder-cart-item").fadeOut();
-              $("#rknm-tabs-cart").html(response.data.html_cart_basket);
-              $(".rknm-tab-count-cart").text(response.data.cart_count);
-              $confirmBtn
-                .removeClass("loading")
-                .prop("disabled", false)
-                .text("حذف");
-              $("#rknm-cart-del-modal")
-                .removeClass("show")
-                .addClass("rknm-hidden");
-              toastr.success(response.data.message, "", {
-                toastClass: "rknm-cart-toast-success",
-                toastId: "rknm_cart_toast-" + Date.now(),
-              });
-            }
-          },
-          error: function () {
-            $btn.closest(".rknm-oreder-cart-item").fadeOut();
-            $confirmBtn
-              .removeClass("loading")
-              .prop("disabled", false)
-              .text("حذف");
-            $("#rknm-cart-del-modal")
-              .removeClass("show")
-              .addClass("rknm-hidden");
-            toastr.error(response.data.message, "", {
-              toastClass: "rknm-cart-toast-error",
-              toastId: "rknm_cart_toast-" + Date.now(),
-            });
-          },
-        });
-      });
-
-    // Handle cancel button
-    $("#rknm-cart-remove-modal-cancel")
-      .off("click")
-      .on("click", function () {
-        $("#rknm-cart-del-modal").removeClass("show").addClass("rknm-hidden");
       });
   });
 
