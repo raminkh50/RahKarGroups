@@ -854,3 +854,71 @@ h3.product-name {
     min-width: 80px;
   }
 }
+
+/* Quantity input styles */
+.quantity {
+  display: flex;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: -5px 5px 20px -10px #ccc;
+  padding: 6px 4px 2px 4px;
+}
+
+.quantity:is(.rknm-btn, .input-text) {
+  padding: 0 !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.rknm-btn {
+  cursor: pointer;
+  flex: 30%;
+  text-align: center;
+  align-content: center;
+}
+
+.rknm-btn:hover svg {
+  fill: #f00;
+}
+
+.quantity .input-text {
+  border: none;
+  font-family: "FontF-Ramin", Sans-Serif;
+  flex: 40%;
+  text-align: center !important;
+  border-radius: 8px;
+  background: #fbfbfb;
+  -moz-appearance: textfield;
+}
+
+.quantity .input-text::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+.quantity .input-text:focus {
+  outline: none;
+  background: #f7f7f7;
+}
+
+/* Loading dots for quantity */
+.loading-dots-quantity::after {
+    content: '...';
+    display: inline-block;
+    vertical-align: bottom;
+    animation: loading-dots 1s infinite;
+    width: 20px;
+    text-align: left;
+}
+
+@keyframes loading-dots {
+    0% {
+        content: '.';
+    }
+    33% {
+        content: '..';
+    }
+    66% {
+        content: '...';
+    }
+}
